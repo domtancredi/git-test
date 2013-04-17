@@ -1,144 +1,171 @@
-var gridView = Backbone.Marionette.Layout.extend({
-	id: "gridTemplate",
-	template: "#gridTemplate",
-	gridData: {},
-	toDestroy: {},
-	onShow: function(){
-		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
-		this.drawGrid();
-		var grid=this.kendoGrid();
-		$(".k-grid-content").unbind("scroll");
-		$(".pinnedRow .k-grid-content").bind("scroll",function(){
-			$("table",$el.children(".k-grid-content,.k-grid-header")).css({
-				"position":"relative",
-				"left":-$(this).scrollLeft()
-			})
-		});var that=this;
-		this.resize=function(){
-			that.modelChanged();
-		};
-		PortfolioTool.vent.on("resizeAll", _.bind(this.resize, this));
-		//this.gridPaddingFix();
-		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
-		unbindShares();
-		bindShares();
-		unbindBookmarks();
-		bindBookmarks();
-		var $el=this.$el;
-		$(".k-grid-content").unbind("scroll");
-		$(".pinnedRow .k-grid-content").bind("scroll",function(){
-			$("table",$el.children(".k-grid-content,.k-grid-header")).css({
-				"position":"relative",
-				"left":-$(this).scrollLeft()
-			})
-		});
-		$(".notpinned").unbind("scroll");
-		$(".notpinned").bind("scroll",function(){
-			$("table",$el.children(".k-grid-header")).css({
-				"position":"relative",
-				"left":-$(this).scrollLeft()
-			})
-		});
-		$el.children(".k-grid-content").bind("scroll",function(){
-			$(".k-grid.pinned .k-grid-content:not(.pinned)",$el).css("top",-$(this).scrollTop())
-		});
-		this.comboBoxes();
-		$(".batchActionDropDowns").hide();
-		$(".rowActionDropDowns").hide();
-		this.rowBatchActions();
-	},
-	gridPaddingFix:function(){
-		$("#PortfolioGridPaddingFix").remove();
-		this.$el.parents('.dashboardModuleContent').prepend('<div id="PortfolioGridPaddingFix"></div>')
-	},
-	rowBatchActions:function(){
-		var $this=this;
-		var $fitchBlue = "#3a6e8e";
-		var $inactiveGray = "#2e3133";
-		var $mediumGray = "#393d40";
-		var $green = "#c6ff00";
-		var $lightGray = "#878f95";
-		$(".k-grid-content tr").contextMenu("RowActionsMenu", {
-			bindings: {
-				'SetAlert': function() {
-					console.log("This is called when you set an alert");
-				},
-				'CreateReport': function() {
-					console.log("This is called when you create a report");
-				},
-				'SetAlerts': function() {
-					console.log("This is called when you set a group alert");
-				},
-				'CreateReports': function() {
-					console.log("This is called when you create a group report");
-				},
-				'ViewPeers': function() {
-					console.log("This is called when you view peers");
-				},
-				'ViewIssues': function(e) {
-					var $e=$(e);
-					if(!$e.is("tr"))
-						$e=$e.parents("tr");
-					window.location.href=$e.find("td:nth-child(2) .hasID").attr("href")+"/view/Issues";
-				},
-				'RelatedContent': function(e) {
-					var $e=$(e);
-					if(!$e.is("tr"))
-						$e=$e.parents("tr");
-					if($e.find("td:nth-child(2) .hasID").data("entityId")){
-						var id=$e.find("td:nth-child(2) .hasID").data("entityId");
-						url=apiURLs.entity({id:id});
-						jsonp.request(url,function(data){
-							openInNewWindow(data.entity.entityStructure.fitchSummary);
-						});
-					}else if($e.find("td:nth-child(2) .hasID").data("issueId")){
-						var id=$e.find("td:nth-child(2) .hasID").data("issueId");
-						url=apiURLs.issue({id:id});
+
+green
+bold greenAdd: 
+Guests | Rooms, etc.
+GuestsEmail guests
+Yes: 5, Maybe: 0New Zealand Marriage Equality Bill passes in to law (3news.co.nz)
+(17791|14927) submitted 7 hours ago by peelingback to worldnews
+1444 commentssharesavehidereport[l+c]
+3
+553
+researchers at MIT have unraveled the structure of bone with almost atom-by-atom precision (web.mit.edu)
+(248|46) submitted 2 hours ago by joshdavidson to science
+14 commentssharesavehidereport[l+c]
+4
+744
+If Antiques Roadshow was on in the year 2513, what items from our era would be worth $5,000+? (self.AskReddit)
+(877|285) submitted 5 hours ago by VoiceMan22 to AskReddit
+1266 commentssharesavehidereport[l=c]
+5
+530
+Why do some sounds cause physical discomfort to our ears? Is it because they are actually damaging them?Interdisciplinary (self.askscience)
+(255|56) submitted 6 hours ago* by pewpewpew1114 to askscience
+58 commentssharesavehidereport[l=c]
+6
+•
+
+You asked, we delivered. Orangered and Periwinkle shirts for charity! (redditgifts.com)
+(160|74) submitted 14 minutes ago by kickme444 [A] to blog
+73 commentssharesavehidereport[l+c]
+7
+70
+A very heartfelt thank you to BIFL (self.BuyItForLife), No: 0, Awaiting: 5, Optional: 0
+Anthony Add: 
+Guests | Rooms, etc.
+GuestsEmail guests
+Yes: 5, Maybe: 0, No: 0, Awaiting: 5, Optional: 0
+Anthony Sgueglia
+Daniel Costalis
+DeVon Jackson
+Dominic Tancredi
+Joe Chagan
+36coopersq@gmail.com
+Andrew Summers
+Gil RutkowskiNew Zealand Marriage Equality Bill passes in to law (3news.co.nz)
+(17791|14927) submitted 7 hours ago by peelingback to worldnews
+1444 commentssharesavehidereport[l+c]
+3
+553
+researchers at MIT have unraveled the structure of bone with almost atom-by-atom precision (web.mit.edu)
+(248|46) submitted 2 hours ago by joshdavidson to science
+14 commentssharesavehidereport[l+c]
+4
+744
+If Antiques Roadshow was on in the year 2513, what items from our era would be worth $5,000+? (self.AskReddit)
+(877|285) submitted 5 hours ago by VoiceMan22 to AskReddit
+1266 commentssharesavehidereport[l=c]
+5
+530
+Why do some sounds cause physical discomfort to our ears? Is it because they are actually damaging them?Interdisciplinary (self.askscience)
+(255|56) submitted 6 hours ago* by pewpewpew1114 to askscience
+58 commentssharesavehidereport[l=c]
+6
+•
+
+You asked, we delivered. Orangered and Periwinkle shirts for charity! (redditgifts.com)
+(160|74) submitted 14 minutes ago by kickme444 [A] to blog
+73 commentssharesavehidereport[l+c]
+7
+70
+A very heartfelt thank you to BIFL (self.BuyItForLife)
+Jon Cherlin
+Patrick Bakke
+Daniel Costalis
+DeVon Jackson
+Dominic TNew Zealand Marriage Equality Bill passes in to law (3news.co.nz)
+(17791|14927) submitted 7 hours ago by peelingback to worldnews
+1444 commentssharesavehidereport[l+c]
+3
+553
+researchers at MIT have unraveled the structure of bone with almost atom-by-atom precision (web.mit.edu)
+(248|46) submitted 2 hours ago by joshdavidson to science
+14 commentssharesavehidereport[l+c]
+4
+744
+If Antiques Roadshow was on in the year 2513, what items from our era would be worth $5,000+? (self.AskReddit)
+(877|285) submitted 5 hours ago by VoiceMan22 to AskReddit
+1266 commentssharesavehidereport[l=c]
+5
+530
+Why do some sounds cause physical discomfort to our ears? Is it because they are actually damaging them?Interdisciplinary (self.askscience)
+(255|56) submitted 6 hours ago* by pewpewpew1114 to askscience
+58 commentssharesavehidereport[l=c]
+6
+•
+
+You asked, we delivered. Orangered and Periwinkle shirts for charity! (redditgifts.com)
+(160|74) submitted 14 minutes ago by kickme444 [A] to blog
+73 commentssharesavehidereport[l+c]
+7
+70
+A very heartfelt thank you to BIFL (self.BuyItForLife)ancredi
+Joe Chagan
+36coopersq@gmail.com
+Andrew Summers
+Gil Rutkowski
+Jon Cherlin
+Patrick Bakke
+yellow
+orange
+red
+bold red
+purple
+gray
+Reminders	
+ 
+ 
+Add a reminder
+Show me as	
+AvailableBusy
+Privacy	
+DefaultPublicPrivate
+Description	
+Breakout session to test, review, and control GIT:
+Go through these courses or you cannot attend the meeting!
+http://www.codeschool.com/courses/try-git
+http://www.codeschool.com/courses/git-real
+
+If you need help getting access to the "git-real" tutorial, let me know.
+Event color	
+noneAdd: 
+Guests | Rooms, etc.
+GuestsEmail guests
+Yes: 5, Maybe: 0, No: 0, Awaiting: 5, Optional: 0
+Anthony Sgueglia
+Daniel Costalis
+DeVon Jackson
+Dominic Tancredi
+Joe Chagan
+36coopersq@gmail.com
+Andrew Summers
+Gil Rutkowski
+Jon Cherlin
+Patrick Bakke
+bold blue
+blue
+turquoise
+green
+bold green
+yellow
+orange
+red
+bold red
+purple
+gray
+Reminders	
+ 
+ 
+Add a reminder
+Show me as	
+AvailableBusy
+Privacy	
+DefaultPublicPrivate
 						jsonp.request(url,function(data){
 							openInNewWindow(data.issue.issueStructure.fitchSummary);
 						});
 					}
 					console.log("This is called when you related content");
-				},
-				'DeleteItem': function() {
-					console.log("This is called when you delete item");
-				},
-				'DeleteItems': function() {
-					console.log("This is called when you delete multiple items");
-				}
-			},
-			menuStyle: {
-				border: '1px solid ' + $fitchBlue,
-				backgroundColor: $inactiveGray,
-				fontSize: '13px',
-				padding: '2px',
-				width: '160px'
-			},
-			itemStyle: {
-				backgroundColor: 'transparent',
-				color: $lightGray,
-				border: 'none',
-				padding: '3px 4px'
-			},
-			itemHoverStyle: {
-				color: $green,
-				border: '1px solid ' + $mediumGray,
-				backgroundColor: 'transparent',
-				padding: '2px 3px'
-			},
-			onContextMenu: function(e) {
-				var $src=$(e.srcElement);
-				var i=$src.parents("tr").index();
-				var $el=$src.parents("#gridTemplate");
-				if(!$src.hasClass("rowAction") && !$src.parents(".selected").length){
-					$("tr",$el).removeClass("selected");
-				}
-				$(".batchActionDropDowns").show();
-				if($src.parents(".pinnedRow").length){
-					$("tr:nth-child("+(i+1)+")",$el.children(".pinnedRow")).addClass("selected");
-					$("tr",$el.children(".k-grid")).removeClass("selected");
-					$("tr",$el.children(".notpinned")).removeClass("selected");
-				}else{
+		
 					$("tr",$el.children(".pinnedRow")).removeClass("selected");
 					$("tr:nth-child("+(i+1)+")",$el.children(".k-grid")).addClass("selected");
 					$("tr:nth-child("+(i+1)+")",$el.children(".notpinned")).addClass("selected");
