@@ -1,0 +1,679 @@
+var gridView = Backbone.Marionette.Layout.extend({
+	id: "gridTemplate",
+	template: "#gridTemplate",
+	gridData: {},
+	toDestroy: {},
+	onShow: function(){
+		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};
+		PortfolioTool.vent.on("resizeAll", _.bind(this.resize, this));
+		//this.gridPaddingFix();
+		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		unbindShares();
+		bindShares();
+		unbindBookmarks();
+		bindBookmarks();
+		var $el=this.$el;
+		$(".k-grid-content").unbind("scroll");
+		$(".pinnedRow .k-grid-content").bind("scroll",function(){
+			$("table",$el.children(".k-grid-content,.k-grid-header")).css({
+				"position":"relative",
+				"left":-$(this).scrollLeft()
+			})
+		});
+		$(".notpinned").unbind("scroll");
+		$(".notpinned").bind("scroll",function(){
+			$("table",$el.children(".k-grid-header")).css({
+				"position":"relative",
+				"left":-$(this).scrollLeft()
+			})
+		});
+		$el.children(".k-grid-content").bind("scroll",function(){
+			$(".k-grid.pinned .k-grid-content:not(.pinned)",$el).css("top",-$(this).scrollTop())
+		});
+		this.comboBoxes();
+		$(".batchActionDropDowns").hide();
+		$(".rowActionDropDowns").hide();
+		this.rowBatchActions();
+	},
+	gridPaddingFix:function(){
+		$("#PortfolioGridPaddingFix").remove();
+		this.$el.parents('.dashboardModuleContent').prepend('<div id="PortfolioGridPaddingFix"></div>')
+	},
+	rowBatchActions:function(){
+		var $this=this;
+		var $fitchBlue = "#3a6e8e";
+		var $inactiveGray = "#2e3133";
+		var $mediumGray = "#393d40";
+		var $green = "#c6ff00";
+		var $lightGray = "#878f95";
+		$(".k-grid-content tr").contextMenu("RowActionsMenu", {
+			bindings: {
+				'SetAlert': function() {
+					console.log("This is called when you set an alert");
+				},
+				'CreateReport': function() {
+					console.log("This is called when you create a report");
+				},
+				'SetAlerts': function() {
+					console.log("This is called when you set a group alert");
+				},
+				'CreateReports': function() {
+					console.log("This is called when you create a group report");
+				},
+				'ViewPeers': function() {
+					console.log("This is called when you view peers");
+				},
+				'ViewIssues': function(e) {
+					var $e=$(e);
+					if(!$e.is("tr"))
+						$e=$e.parents("tr");
+					window.location.href=$e.find("td:nth-child(2) .hasID").attr("href")+"/view/Issues";
+				},
+				'RelatedContent': function(e) {
+					var $e=$(e);
+					if(!$e.is("tr"))
+						$e=$e.parents("tr");
+					if($e.find("td:nth-child(2) .hasID").data("entityId")){
+						var id=$e.find("td:nth-child(2) .hasID").data("entityId");
+						url=apiURLs.entity({id:id});
+						jsonp.request(url,function(data){
+							openInNewWindow(data.entity.entityStructure.fitchSummary);
+						});
+					}else if($e.find("td:nth-child(2) .hasID").data("issueId")){
+						var id=$e.find("td:nth-child(2) .hasID").data("issueId");
+						url=apiURLs.issue({id:id});
+						jsonp.request(url,function(data){
+							openInNewWindow(data.issue.issueStructure.fitchSummary);
+						});
+					}
+					console.log("This is called when you related content");
+				},
+				'DeleteItem': function() {
+					console.log("This is called when you delete item");
+				},
+				'DeleteItems': function() {
+					console.log("This is called when you delete multiple items");
+				}
+			},
+			menuStyle: {
+				border: '1px solid ' + $fitchBlue,
+				backgroundColor: $inactiveGray,
+				fontSize: '13px',
+				padding: '2px',
+				width: '160px'
+			},
+			itemStyle: {
+				backgroundColor: 'transparent',
+				color: $lightGray,
+				border: 'none',
+				padding: '3px 4px'
+			},
+			itemHoverStyle: {
+				color: $green,
+				border: '1px solid ' + $mediumGray,
+				backgroundColor: 'transparent',
+				padding: '2px 3px'
+			},
+			onContextMenu: function(e) {
+				var $src=$(e.srcElement);
+				var i=$src.parents("tr").index();
+				var $el=$src.parents("#gridTemplate");
+				if(!$src.hasClass("rowAction") && !$src.parents(".selected").length){
+					$("tr",$el).removeClass("selected");
+				}
+				$(".batchActionDropDowns").show();
+				if($src.parents(".pinnedRow").length){
+					$("tr:nth-child("+(i+1)+")",$el.children(".pinnedRow")).addClass("selected");
+					$("tr",$el.children(".k-grid")).removeClass("selected");
+					$("tr",$el.children(".notpinned")).removeClass("selected");
+				}else{
+					$("tr",$el.children(".pinnedRow")).removeClass("selected");
+					$("tr:nth-child("+(i+1)+")",$el.children(".k-grid")).addClass("selected");
+					$("tr:nth-child("+(i+1)+")",$el.children(".notpinned")).addClass("selected");
+				}
+				
+				if($(".notpinned tr.selected").length>1){
+					//var bActions=$(".contextmenu.BatchActions").clone();
+					$("#RowActionsMenu ul").html($(".contextmenu.BatchActions").html());
+				}else{
+					var rActions=$(".contextmenu.RowActions").clone();
+					if($this.model.get("view")=="Issues")
+						rActions.find("#ViewIssues").remove();
+					$("#RowActionsMenu ul").html(rActions.html());
+					delete rActions;
+				}				
+				return true;
+			}
+		});
+		
+		if($("#RowActions").data("kendoDropDownList"))
+			$("#RowActions").data("kendoDropDownList").destroy();
+		var dataSource=[];
+		$(".contextmenu.RowActions").children().each(function(){
+			dataSource.push({
+				name:$(this).html(),
+				id:$(this).attr("id")
+			});
+		});
+		this.toDestroy['RowActions'] = $('#RowActions').kendoDropDownList({
+			dataTextField:"name",
+			dataValueField:"id",
+			dataSource: dataSource,
+			filter:"contains",
+			suggest:true,
+			index:0,
+			change:$this.rowActionHander
+		}).data('kendoDropDownList');
+		if($("#BatchActions").data("kendoDropDownList"))
+			$("#BatchActions").data("kendoDropDownList").destroy();
+		var dataSource=[];
+		$(".contextmenu.BatchActions").children().each(function(){
+			dataSource.push({
+				name:$(this).html(),
+				id:$(this).attr("id")
+			})
+		});
+		
+		this.toDestroy['BatchActions'] = $('#BatchActions').kendoDropDownList({
+			dataTextField:"name",
+			dataValueField:"id",
+			dataSource: dataSource,
+			filter:"contains",
+			suggest:true,
+			index:0,
+			change:$this.rowActionHander
+		}).data('kendoDropDownList');
+	},
+	rowActionHander:function(e){
+		switch(e.sender._selectedValue){
+			case "SetAlerts":case "SetAlert":
+				console.debug("alert");
+				break;
+			case "CreateReport":case "CreateReports":
+				console.debug("report");
+				break;
+			case "ViewPeers":
+				console.debug("peers");
+				break;
+			case "ViewIssues":
+				var $selected=$(".notpinned tr.selected");
+				window.location.href=$selected.find("td:nth-child(2) .hasID").attr("href")+"/view/Issues";
+				break;
+			case "ViewRelated":case "RelatedContent":
+				var $selected=$(".notpinned tr.selected");
+				if($selected.find("td:nth-child(2) .hasID").data("entityId")){
+					var id=$selected.find("td:nth-child(2) .hasID").data("entityId");
+					url=apiURLs.entity({id:id});
+					jsonp.request(url,function(data){
+						openInNewWindow(data.entity.entityStructure.fitchSummary);
+					});
+				}else if($selected.find("td:nth-child(2) .hasID").data("issueId")){
+					var id=$selected.find("td:nth-child(2) .hasID").data("issueId");
+					url=apiURLs.issue({id:id});
+					jsonp.request(url,function(data){
+						openInNewWindow(data.issue.issueStructure.fitchSummary);
+					});
+				}
+				break;
+			case "DeleteItem":
+				console.debug("delete");
+				break;
+			default:break;
+		}
+	},
+	comboBoxes:function(){
+		var statistics = [
+			{
+				"name":"Average",
+				"id":"average"
+			},
+			{
+				"name":"Median",
+				"id":"median"
+			},
+			{
+				"name":"Maximum",
+				"id":"max"
+			},
+			{
+				"name":"Minimum",
+				"id":"min"
+			},
+			{
+				"name":"Median",
+				"id":"median"
+			},
+			{
+				"name":"Sum",
+				"id":"sum"
+			},
+			{
+				"name":"Standard Deviation",
+				"id":"standardDeviation"
+			}
+		];
+		if(this.model.get("activeStat"))
+			var activeStat=this.model.get("activeStat").toLowerCase();
+		else
+			var activeStat="average";
+		$(".statisticalSummary,.statisticalSummaryColumn").hide();
+		$(".statisticalSummary."+activeStat+",.statisticalSummaryColumn."+activeStat).css({"display":"inline-block"});
+		$(".statisticalSummary,.statisticalSummaryColumn").removeClass("activeStat");
+		$(".statisticalSummaryDropDown").kendoDropDownList({
+			dataTextField: "name",
+			dataValueField: "id",
+			dataSource: statistics,
+			filter: "contains",
+			suggest: true,
+			index: 0,
+			change:function(e){
+				$(".statisticalSummary, .statisticalSummaryColumn").hide();
+				$(".statisticalSummary."+this.value()+",.statisticalSummaryColumn."+this.value()).show();
+				this.value()
+			}
+		});
+	},
+	modelEvents: {
+		"change": "modelChanged"
+	},
+	events:{
+		"hover .k-grid-content td a":"hoverCell",
+		"hover .k-grid-content td span":"hoverCell",
+		"hover .k-grid-content td div": "hoverCell",
+		"click .rowAction":"rowActionBoxClick",
+		"click tr":"clearSelectedRows"
+	},
+	clearSelectedRows:function(e){
+		$(".batchActionDropDowns").hide();
+		$(".rowActionDropDowns").hide();
+		$(".pinnedRow .rowAction.unchecked").removeClass("hideAction");
+		var $el=$(this.$el);
+		if(!$(e.srcElement).hasClass("rowAction")){
+			$("tr",$el).removeClass("selected");
+		}
+	},
+	rowActionBoxClick:function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var $el=$(this.$el);
+		if(!$el.parents("dashboard").length){
+			var i=$(e.srcElement).parents("tr").index();
+			if($(e.srcElement).parents(".pinnedRow").length){
+				$(".hideAction").removeClass("hideAction");
+				$("tr:nth-child("+(i+1)+")",$el.children(".pinnedRow")).toggleClass("selected");
+				$("tr",$el.children(".k-grid")).removeClass("selected");
+				$("tr",$el.children(".notpinned")).removeClass("selected");
+			}else{
+				if($(e.srcElement).parents("tr").hasClass("selected") && $("tr.selected",$el.children(".notpinned")).length==1){
+					$(".pinnedRow .rowAction.unchecked").removeClass("hideAction");
+				}else{
+					$(".pinnedRow .rowAction").addClass("hideAction");
+				}
+				$("tr",$el.children(".pinnedRow")).removeClass("selected");
+				$("tr:nth-child("+(i+1)+")",$el.children(".k-grid")).toggleClass("selected");
+				$("tr:nth-child("+(i+1)+")",$el.children(".notpinned")).toggleClass("selected");
+			}
+			if($("tr.selected",$el.children(".notpinned")).length){
+				if($("tr.selected",$el.children(".notpinned")).length==1){
+					$(".batchActionDropDowns").hide();
+					$(".rowActionDropDowns").show();
+				}else{
+					$(".batchActionDropDowns").show();
+					$(".rowActionDropDowns").hide();
+				}
+			}else{
+				if($("tr.selected").length){ //summary row case
+					$(".batchActionDropDowns").hide();
+					$(".rowActionDropDowns").show();
+				}else{
+					$(".batchActionDropDowns").hide();
+					$(".rowActionDropDowns").hide();
+				}
+			}
+		}
+	},
+	hoverCell:function(e){
+		var that = this;
+		$el=$(e.srcElement);
+		if(e.type === "mouseenter" && $el.data("asOfDate") || $el.data("historicData")){
+			PortfolioTool.vent.trigger("HistoricalDataTooltip", that, $el);
+		}
+		if(e.type === "mouseleave"){
+			PortfolioTool.vent.trigger("RemoveModal");
+		}
+	},
+	modelChanged:function(){
+		this.model.destroyGrid(this.$el);
+		if(this.model.get("destroyCallback") && typeof this.model.get("destroyCallback") =="function"){
+			this.model.get("destroyCallback")();
+		}
+		this.onShow();
+		if(this.model.get("updateCallback") && typeof this.model.get("updateCallback") =="function"){
+			this.model.get("updateCallback")();
+		}
+		unbindShares();
+		bindShares();
+		unbindBookmarks();
+		bindBookmarks();
+	},
+	pinRows:function(){
+		var $el=$(this.$el);
+		var $row=$(".k-grid-content tr:last-child",$el);
+		if($row.find(".statisticalSummary").length){
+			var $newRow=$row.clone();
+			$row.remove();
+			var colgroup=$(".k-grid-content colgroup",$el);
+			
+			var tb1	=$('<tbody/>').append($newRow);
+			var tbl1=$('<table cellspacing="0"/>').append(colgroup.clone()).append(tb1);
+			var div1=$('<div/>').append(tbl1).addClass("k-grid-content").css("background","#393d40");
+			css={
+				"bottom":"1px",
+				"z-index": "10",
+				"position": "absolute"
+			};
+			var pin	=$('<div/>').append(div1).addClass("pinned pinnedRow").css(css);
+			$el.append(pin);
+			$el.children(".k-grid-content").height($el.parent().height()-pin.height()-20);
+		}
+	},
+	pinColumns:function(padTop){
+		var $el=$(this.$el);
+		var dirs=["Left","Right"];
+		for(var j=0;j<dirs.length;j++){
+			var width=0;
+			var $TRs=[];
+			var ths=$el.find(".k-grid-header-wrap:not(.colGroups)").find("th");
+			$(ths).each(function(i,curCol){
+				if($(curCol).hasClass("pinned"+dirs[j])){
+					var th=$(curCol);
+					if($TRs.length==0){
+						$TRs.push($("<tr/>"));
+					}
+					width+=th.outerWidth();
+					$el.children(".k-grid-content").find("td:nth-child("+(i+1)+")").each(function(k,e){
+						if($TRs.length<=k+1){
+							$TRs.push($("<tr/>").css({
+								"height":$(this).outerHeight()-1,
+								"width":th.outerWidth(),
+								"padding":0
+							}));
+						}
+						$TRs[k+1].append($(this).clone().css({
+							"height":$(this).outerHeight()-1,
+							"width":th.outerWidth(),
+							"padding":0
+						}));
+						$(this).children().css("visibility","hidden");
+					});
+					var extra=padTop?padTop:0;
+					$TRs[0].append(th.clone().css({
+						"height":th.outerHeight()+extra,
+						"width":th.width(),
+						"padding":"0 0 0 5px"
+					}));
+					th.children().css("visibility","hidden");
+				}
+			});
+			if($TRs.length>0){
+				var tb1	=$('<tbody/>');
+				var tb2	=$('<tbody/>');
+				for(var i=0;i<$TRs.length;i++){
+					if(i>0)
+						tb2.append($TRs[i]);
+					else
+						tb1.append($TRs[i]);
+				};
+				var tbl1=$('<table cellspacing="0"/>').append(tb1);
+				var tbl2=$('<table cellspacing="0"/>').append(tb2);
+				var div1=$('<div/>').append(tbl1).addClass("k-grid-header");
+				var div2=$('<div/>').append(tbl2).addClass("k-grid-content");
+				var css={};
+					css["width"]=width;
+					if(dirs[j]=="Right")
+						css[dirs[j].toLowerCase()]=17;
+					else
+						css[dirs[j].toLowerCase()]=0;
+				var pin	=$('<div/>').append(div1).append(div2).addClass("k-grid pinned").css(css);
+				$el.append(pin);
+			}
+		}
+		$el.children(".k-grid-content").addClass("notpinned");
+	},
+	pinRowColumns:function(){
+		var $el=$(this.$el);
+		var dirs=["Left","Right"];
+		for(var j=0;j<dirs.length;j++){
+			var width=0;
+			var $TRs=[];
+			var ths=$el.find(".k-grid-header-wrap:not(.colGroups)").find("th");
+			$(ths).each(function(i,curCol){
+				if($(curCol).hasClass("pinned"+dirs[j])){
+					var th=$(curCol);
+					if($TRs.length==0){
+						$TRs.push($("<tr/>"));
+					}
+					width+=th.outerWidth();
+					$el.children(".pinnedRow").find("td:nth-child("+(i+1)+")").each(function(k,e){
+						if($TRs.length<=k+1){
+							$TRs.push($("<tr/>").css({
+								"height":$(this).outerHeight()-1,
+								"width":th.outerWidth(),
+								"padding":0,
+								"background":"#393d40"
+							}));
+						}
+						$TRs[k+1].append($(this).clone().css({
+							"height":$(this).outerHeight()-1,
+							"width":th.outerWidth(),
+							"padding":0
+						}));
+						$(this).children().css("visibility","hidden");
+					});
+				}
+			});
+			if($TRs.length>0){
+				var tb2	=$('<tbody/>');
+				for(var i=0;i<$TRs.length;i++){
+					if(i>0)
+						tb2.append($TRs[i]);
+				};
+				var tbl2=$('<table class="pinned" cellspacing="0"/>').append(tb2);
+				var div2=$('<div/>').append(tbl2).addClass("k-grid-content pinned");
+				var css={};
+					css["width"]=width;
+					if(dirs[j]=="Right")
+						css[dirs[j].toLowerCase()]=17;
+					else
+						css[dirs[j].toLowerCase()]=0;
+				var pin	=$('<div/>').append(div2).addClass("k-grid pinned").css(css);
+				$el.children(".pinnedRow").append(pin);
+			}
+		}
+		
+		/*if($("body").hasClass("dashboard")){
+			$(".pinned span.rowAction").on("mouseup", function(e){
+			    PortfolioTool.vent.trigger("LoadDashboardAlert","e.srcElement" ,"Expand to Portfolio Detail to interact with the portfolio");
+			});
+		}*/
+	},
+	columnGroups:function(){
+		var colGroupHeight=30;
+		var $header=$(".k-grid-header",$(this.$el));
+		var $content=$(".notpinned",$(this.$el));
+		var $colGroups=$($header.html());
+		var currColGroup='';
+		var currColEl=false;
+		var currColSpan=0;
+		var ColGroupsExist=false
+		$colGroups.find("th").each(function(){
+			$(this).bind("click",function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			});
+			$("a",$(this)).bind("click",function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			});
+			if(currColSpan>0){
+				ColGroupsExist=true;
+			}
+			if($(this).data("columnGroup")){
+				if(currColSpan==0){
+					currColEl=$(this);
+					currColGroup=$(this).data("columnGroup");
+				}else{
+					if(currColGroup==$(this).data("columnGroup")){
+						$(this).remove();
+					}else{
+						currColEl.attr("colspan",currColSpan);
+						currColEl.css({
+							"text-align":"center",
+							"width":currColEl.width()-2,
+							"border-bottom":"1px solid #333",
+							"border-right":"1px solid #333",
+							"border-left":"1px solid #333"
+						});
+						currColEl.html(currColGroup);
+						currColSpan=0;
+						currColEl=$(this);
+						currColGroup=$(this).data("columnGroup");
+					}
+				}
+				currColSpan++;
+			}else{
+				if(currColEl){
+					currColEl.attr("colspan",currColSpan);
+					currColEl.css({
+						"text-align":"center",
+						"width":currColEl.width()-2,
+						"border-bottom":"1px solid #333",
+						"border-right":"1px solid #333",
+						"border-left":"1px solid #333"
+					});
+					currColEl.html(currColGroup);
+				}
+				$(this).css("visibility","hidden");
+				currColSpan=0;
+				currColEl=false;
+				curColGroup='';
+			}
+		});
+		if(ColGroupsExist){
+			$header.height($header.height()+colGroupHeight);
+			$content.height($content.height()-colGroupHeight);
+			$colGroups.addClass("colGroups");
+			$header.prepend($colGroups);
+			return colGroupHeight;
+		}else{
+			return 0;
+		}
+	},
+	drawGrid:function(){	
+		$(".pinned").remove();
+		if(this.$el.parents("#Region3").length || this.$el.parents("#Region4").length){
+			var kGrid=this.model.makeGrid(true,this.gridData);
+			
+		}else{
+			var kGrid=this.model.makeGrid(false,this.gridData);			
+		}
+		if($("body").hasClass("dashboard")){
+			kGrid.reorderable=false;
+		}
+		this.$el.kendoGrid(kGrid);
+
+		if(!$('html').hasClass('lt-ie8')){
+			
+		}
+		var colGroups=this.columnGroups();
+		this.pinRows(colGroups?30:0);
+		this.pinColumns(colGroups?30:0);
+		this.pinRowColumns(colGroups?30:0);
+		// this.model.bindSorts(this.$el);
+		this.bindSorts();
+		if(!$('html').hasClass('lt-ie8')){
+			// this.$el.find('.k-grid-content').mCustomScrollbar({
+				// scrollable: true,
+				// autoHideScrollbar: true
+			// });
+		}
+		var that=this;
+		var t=window.setInterval(function(){
+			that.gridPaddingFix();
+			window.clearInterval(t);
+		},100);
+
+		if(kGrid.reorderable === false){
+			var isDragging = false;
+			$("th.k-header span").on("mousedown", function(e){
+				$(window).mousemove(function() {
+			        isDragging = true;
+			        $(window).unbind("mousemove");
+			    });
+			}).on("mouseup mouseleave", function(e){
+				var wasDragging = isDragging;
+			    isDragging = false;
+			    $(window).unbind("mousemove");
+			    if (wasDragging && $("body").hasClass("dashboard")) { 
+					PortfolioTool.vent.trigger("LoadDashboardAlert","e.srcElement" ,"Expand to Portfolio Detail to interact with the portfolio");
+					e.stopPropagation();
+			    }
+			})
+		}
+		
+		$("th.k-header span").each(function() {
+			if ($(this).data('tooltip') ){
+				$(this).kendoTooltip({content: $(this).data('tooltip')});
+			}
+		});
+		
+	},
+	bindSorts:function(){
+		var $this=this;
+		var $el=$(this.$el)
+		$el.find("th").bind("click",function(){
+			if($(this).children(".statisticalSummaryDropDown").length<=0 && $(this).parents(".colGroups").length<=0){
+				var order=$this.trigger("sort",$(this).data("field"));
+			}
+		});
+	},
+	resize:function(){console.debug("resize!")},
+	kendoGrid:function(){
+		return this.$el.data("kendoGrid");
+	},
+	destroyGrid:function(){
+		grid._draggableInstance.destroy();
+		grid.destroy();
+	},
+	initialize:function(options) {
+		if (!options.gridData) {
+			this.gridData = this.model.attributes.portfolioGrid;
+		} else {
+			this.gridData = options.gridData;
+		}
+	},
+	onClose:function(){
+		PortfolioTool.vent.unbind("resizeAll");
+		if (this.toDestroy.length > 0) {
+			_.each(this.toDestroy, function(value) {
+				if (typeof value.destroy === "function") {
+					value.destroy(); 
+					delete value;
+				}
+			});
+		}
+		$("th.k-header span").each(function() {
+			if ($(this).data('kendoTooltip')) {
+				$(this).data('kendoTooltip').destroy();
+			}
+		});		
+	}
+});
