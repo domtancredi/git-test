@@ -1,9 +1,68 @@
+var gridView = Backbone.Marionette.Layout.extend({
+	dom: "tom",
+	stuff: "morestuff",
+	id: "gridTemplate",
+	template: "#gridTemplate",
+	gridData: {},domtancredi / git-test
+	Yes: 5, Maybe: 0New Zealand Marriage Equality Bill passes in to law (3news.co.nz)
 
-green
-bold greenAdd: 
-Guests | Rooms, etc.
-GuestsEmail guests
-Yes: 5, Maybe: 0New Zealand Marriage Equality Bill passes in to law (3news.co.nz)
+Code
+Network
+Pull Requests 0
+Issues 0
+Wiki
+Graphs
+	Alec Grotenstein
+	Andrew Summers
+	Anuj Shah
+	Daniel Saad
+	DeVon Jackson
+	Dominic Tancredi
+	Drew Papadeas
+	Joe Tancredi
+	Jon Cherlin
+	Josh Churgin
+	Keith Schneider
+	Mauricio Lopez
+	mauricio.lopez
+	Michael Nelson
+	Mike Else
+	Tim Daly
+	Tom Tancredi
+	Gil Rutkowski
+In a meeting.
+	Greg Hoch
+	Paul Petrowsky
+	Thea Kluge
+Fitching my brains out
+	Alejandro Vinueza
+	Amy Hudson
+	Anthony Sgueglia
+	Ashley Soriano
+Sunshine, family, friends, water, and a good run are all I need.
+	Brian Hollenbeck
+	Daniel Costalis
+@ Trib Tower
+	Daniel Costalis
+@ Trib Tower
+	Dom & Tom Inc.
+	Joe Chagan
+werk
+	MaryKate McHugh
+	Noelle Bohlen
+on mobile island
+	Pablo Pena
+	Patrick Bakke
+http://open.spotify.com/track/798GAE5BFFx7yCcloeTpCr
+	Paul Stanton
+At Google
+	Peter Honiotes
+	Piyum Zonooz
+	Ruth Eglsaer
+	Vita Wu
+	Aaron Schubert
+	Anuj Shah
+	Audrey DimolaNew Zealand Marriage Equality Bill passes in to law (3news.co.nz)
 (17791|14927) submitted 7 hours ago by peelingback to worldnews
 1444 commentssharesavehidereport[l+c]
 3
@@ -67,12 +126,7 @@ You asked, we delivered. Orangered and Periwinkle shirts for charity! (redditgif
 73 commentssharesavehidereport[l+c]
 7
 70
-A very heartfelt thank you to BIFL (self.BuyItForLife)
-Jon Cherlin
-Patrick Bakke
-Daniel Costalis
-DeVon Jackson
-Dominic TNew Zealand Marriage Equality Bill passes in to law (3news.co.nz)
+A very heartfelt thank you to BIFL (self.BuyItForLife)New Zealand Marriage Equality Bill passes in to law (3news.co.nz)
 (17791|14927) submitted 7 hours ago by peelingback to worldnews
 1444 commentssharesavehidereport[l+c]
 3
@@ -98,68 +152,199 @@ You asked, we delivered. Orangered and Periwinkle shirts for charity! (redditgif
 73 commentssharesavehidereport[l+c]
 7
 70
-A very heartfelt thank you to BIFL (self.BuyItForLife)ancredi
-Joe Chagan
-36coopersq@gmail.com
-Andrew Summers
-Gil Rutkowski
-Jon Cherlin
-Patrick Bakke
-yellow
-orange
-red
-bold red
-purple
-gray
-Reminders	
+A very heartfelt thank you to BIFL (self.BuyItForLife)
+	Dushan Perera
+	Elliot Callighan
+	Firdaus Rashid
+	Gregory Hoch
+	Krish Jagirdar
+	Kyungmin Yang
+	Matthew Nickrent
+	Vanessa
+	chewbakke07  Invited
  
+        More 
+2 of 3,092  
  
-Add a reminder
-Show me as	
-AvailableBusy
-Privacy	
-DefaultPublicPrivate
-Description	
-Breakout session to test, review, and control GIT:
-Go through these courses or you cannot attend the meeting!
-http://www.codeschool.com/courses/try-git
-http://www.codeschool.com/courses/git-real
+  
+API from Lydia testing
+Inbox
+x  
+my stuff
+x 
 
-If you need help getting access to the "git-real" tutorial, let me know.
-Event color	
-noneAdd: 
-Guests | Rooms, etc.
-GuestsEmail guests
-Yes: 5, Maybe: 0, No: 0, Awaiting: 5, Optional: 0
-Anthony Sgueglia
-Daniel Costalis
-DeVon Jackson
-Dominic Tancredi
-Joe Chagan
-36coopersq@gmail.com
-Andrew Summers
-Gil Rutkowski
-Jon Cherlin
-Patrick Bakke
-bold blue
-blue
-turquoise
-green
-bold green
-yellow
-orange
-red
-bold red
-purple
-gray
-Reminders	
- 
- 
-Add a reminder
-Show me as	
-AvailableBusy
-Privacy	
-DefaultPublicPrivate
+
+Patrick Bakke		11:34 AM (1 hour ago)
+Just fyi: I tested the basics of the API endpoints Lydia added today. Researc...
+
+Ruth Alyce Graham
+11:54 AM (52 minutes ago)
+
+to me 
+Ok. I will do so on my 3:30 call. Will you send that info to Lydia? 
+
+	
+Click here to Reply or Forward
+5% full
+Using 1.4 GB of your 25 GB
+©2013 Google - Terms of Service - Privacy Policy - Program Policies
+Powered by 
+Last account activity: 6 minutes ago
+Details
+
+Clone in Windows ZIP
+HTTP
+SSH
+Git Read-Only
+	
+Read+Write access
+Tags
+ branch: master
+ Files Commits Branches 1
+ 1 commit
+git-test / 
+Initial commit
+latest commit 96c807ad8a
+ domtancredi authored 8 minutes ago
+README.md
+	toDestroy: {},
+	onShow: function(){
+		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		this.$el.css({"height":domtancredi / git-test
+
+Code
+Network
+Pull Requests 0
+Issues 0
+Wiki
+Graphs
+Clone in Windows ZIP
+HTTP
+SSH
+Git Read-Only
+	
+Read+Write access
+Tags
+ branch: master
+ Files Commits Branches 1
+ 1 commit
+git-test / 
+Initial commit
+latest commit 96c807ad8a
+ domtancredi authored 8 minutes ago
+README.md$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		$(".k-grid-content").unbind("scroll");
+		$(".pinnedRow .k-grid-content").bind("scroll",function(){
+			$("table",$el.children(".k-grid-content,.k-grid-header")).css({
+				"position":"relative",
+				"left":-$(this).scrollLeft()
+			})
+		});var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};
+		PortfolioTool.vent.on("resizeAll", _.bind(this.resize, this));
+		//this.gridPaddingFix();
+		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		unbindShares();
+		bindShares();
+		unbindBookmarks();
+		bindBookmarks();
+		var $el=this.$el;
+		$(".k-grid-content").unbind("scroll");
+		$(".pinnedRow .k-grid-content").bind("scroll",function(){
+			$("table",$el.children(".k-grid-content,.k-grid-header")).css({
+				"position":"relative",
+				"left":-$(this).scrollLeft()
+			})
+		});
+		$(".notpinned").unbind("scroll");
+		$(".notpinned").bind("scroll",function(){
+			$("table",$el.children(".k-grid-header")).css({
+				"position":"relative",
+				"left":-$(this).scrollLeft()
+			})
+		});
+		$el.children(".k-grid-content").bind("scroll",function(){
+			$(".k-grid.pinned .k-grid-content:not(.pinned)",$el).css("top",-$(this).scrollTop())
+		});
+		this.comboBoxes();
+		$(".batchActionDropDowns").hide();
+		$(".rowActionDropDowns").hide();
+		this.rowBatchActions();
+	},
+	gridPaddingFix:function(){
+		$("#PortfolioGridPaddingFix").remove();
+		this.$el.parents('.dashboardModuleContent').prepend('<div id="PortfolioGridPaddingFix"></div>')
+	},
+	rowBatchActions:function(){
+		var $this=this;
+		var $fitchBlue = "#3a6e8e";
+		var $inactiveGray = "#2e3133";
+		var $mediumGray = "#393d40";
+		var $green = "#c6ff00";
+		var $lightGray = "#878f95";
+		$(".k-grid-content tr").contextMenu("RowActionsMenu", {
+			bindings: {
+				'SetAlert': function() {
+					console.log("This is called when you set an alert");
+				},
+				'CreateReport': function() {
+					console.log("This is called when you create a report");
+				},
+				'SetAlerts': function() {
+					console.log("This is called when you set a group alert");
+				},
+				'CreateReports': function() {
+					console.log("This is called when you create a group report");
+				},
+				'ViewPeers': function() {
+					console.log("This is called when you view peers");
+				},
+				'ViewIssues': function(e) {
+					var $e=$(e);
+					if(!$e.is("tr"))
+						$e=$e.parents("tr");
+					window.location.href=$e.find("td:nth-child(2) .hasID").attr("href")+"/view/Issues";
+				},
+				'RelatedContent': function(e) {
+					var $e=$(e);
+					if(!$e.is("tr"))
+						$e=$e.parents("tr");
+					if($e.find("td:nth-child(2) .hasID").data("entityId")){
+						var id=$e.find("td:nth-child(2) .hasID").data("entityId");
+						url=apiURLs.entity({id:id});
+						jsonp.request(url,function(data){
+							openInNewWindow(data.entity.entityStructure.fitchSummary);
+						});
+					}else if($e.find("td:nth-child(2) .hasID").data("issueId")){
+						var id=$e.find("td:nth-child(2) .hasID").data("issueId");
+						url=apiURLs.issue({id:id});
 						jsonp.request(url,function(data){
 							openInNewWindow(data.issue.issueStructure.fitchSummary);
 						});
