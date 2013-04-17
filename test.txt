@@ -1,4 +1,6 @@
 var gridView = Backbone.Marionette.Layout.extend({
+	dom: "tom",
+	stuff: "morestuff",
 	id: "gridTemplate",
 	template: "#gridTemplate",
 	gridData: {},domtancredi / git-test
