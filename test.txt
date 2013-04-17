@@ -6,7 +6,31 @@ var gridView = Backbone.Marionette.Layout.extend({
 	onShow: function(){
 		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
 		this.drawGrid();
+		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
 		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.drawGrid();
+		var grid=this.kendoGrid();
+		var that=this;
+		this.resize=function(){
+			that.modelChanged();
+		};var grid=this.kendoGrid();
 		var that=this;
 		this.resize=function(){
 			that.modelChanged();
