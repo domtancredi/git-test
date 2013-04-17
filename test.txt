@@ -31,7 +31,6 @@ Graphs
 	Tom Tancredi
 	Gil Rutkowski
 In a meeting.
-THIS ISS THE BROKEN LINE
 	Greg Hoch
 	Paul Petrowsky
 	Thea Kluge
