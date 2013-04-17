@@ -1,2 +1,2 @@
-git-test (v1.1)
+git-test (v1.2)
 ========
