@@ -1,12 +1,146 @@
 var gridView = Backbone.Marionette.Layout.extend({
 	id: "gridTemplate",
 	template: "#gridTemplate",
-	gridData: {},
+	gridData: {},domtancredi / git-test
+
+Code
+Network
+Pull Requests 0
+Issues 0
+Wiki
+Graphs
+	Alec Grotenstein
+	Andrew Summers
+	Anuj Shah
+	Daniel Saad
+	DeVon Jackson
+	Dominic Tancredi
+	Drew Papadeas
+	Joe Tancredi
+	Jon Cherlin
+	Josh Churgin
+	Keith Schneider
+	Mauricio Lopez
+	mauricio.lopez
+	Michael Nelson
+	Mike Else
+	Tim Daly
+	Tom Tancredi
+	Gil Rutkowski
+In a meeting.
+	Greg Hoch
+	Paul Petrowsky
+	Thea Kluge
+Fitching my brains out
+	Alejandro Vinueza
+	Amy Hudson
+	Anthony Sgueglia
+	Ashley Soriano
+Sunshine, family, friends, water, and a good run are all I need.
+	Brian Hollenbeck
+	Daniel Costalis
+@ Trib Tower
+	Daniel Costalis
+@ Trib Tower
+	Dom & Tom Inc.
+	Joe Chagan
+werk
+	MaryKate McHugh
+	Noelle Bohlen
+on mobile island
+	Pablo Pena
+	Patrick Bakke
+http://open.spotify.com/track/798GAE5BFFx7yCcloeTpCr
+	Paul Stanton
+At Google
+	Peter Honiotes
+	Piyum Zonooz
+	Ruth Eglsaer
+	Vita Wu
+	Aaron Schubert
+	Anuj Shah
+	Audrey Dimola
+	Dushan Perera
+	Elliot Callighan
+	Firdaus Rashid
+	Gregory Hoch
+	Krish Jagirdar
+	Kyungmin Yang
+	Matthew Nickrent
+	Vanessa
+	chewbakke07  Invited
+ 
+        More 
+2 of 3,092  
+ 
+  
+API from Lydia testing
+Inbox
+x  
+my stuff
+x 
+
+
+Patrick Bakke		11:34 AM (1 hour ago)
+Just fyi: I tested the basics of the API endpoints Lydia added today. Researc...
+
+Ruth Alyce Graham
+11:54 AM (52 minutes ago)
+
+to me 
+Ok. I will do so on my 3:30 call. Will you send that info to Lydia? 
+
+	
+Click here to Reply or Forward
+5% full
+Using 1.4 GB of your 25 GB
+©2013 Google - Terms of Service - Privacy Policy - Program Policies
+Powered by 
+Last account activity: 6 minutes ago
+Details
+
+Clone in Windows ZIP
+HTTP
+SSH
+Git Read-Only
+	
+Read+Write access
+Tags
+ branch: master
+ Files Commits Branches 1
+ 1 commit
+git-test / 
+Initial commit
+latest commit 96c807ad8a
+ domtancredi authored 8 minutes ago
+README.md
 	toDestroy: {},
 	onShow: function(){
 		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
 		this.drawGrid();
-		this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
+		this.$el.css({"height":domtancredi / git-test
+
+Code
+Network
+Pull Requests 0
+Issues 0
+Wiki
+Graphs
+Clone in Windows ZIP
+HTTP
+SSH
+Git Read-Only
+	
+Read+Write access
+Tags
+ branch: master
+ Files Commits Branches 1
+ 1 commit
+git-test / 
+Initial commit
+latest commit 96c807ad8a
+ domtancredi authored 8 minutes ago
+README.md$(this.$el).parent().height(),"width":"100%"});
 		this.drawGrid();
 		var grid=this.kendoGrid();
 		var that=this;
