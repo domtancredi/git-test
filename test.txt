@@ -27,7 +27,13 @@ var gridView = Backbone.Marionette.Layout.extend({
 		};this.$el.css({"height":$(this.$el).parent().height(),"width":"100%"});
 		this.drawGrid();
 		var grid=this.kendoGrid();
-		var that=this;
+		$(".k-grid-content").unbind("scroll");
+		$(".pinnedRow .k-grid-content").bind("scroll",function(){
+			$("table",$el.children(".k-grid-content,.k-grid-header")).css({
+				"position":"relative",
+				"left":-$(this).scrollLeft()
+			})
+		});var that=this;
 		this.resize=function(){
 			that.modelChanged();
 		};var grid=this.kendoGrid();
